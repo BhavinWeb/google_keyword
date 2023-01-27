@@ -15,7 +15,7 @@ const webdriver = require("selenium-webdriver"),
   By = webdriver.By,
   Key = webdriver.Key;
 const csv = require("csvtojson");
-const csvFilePath = "../csv/geotargets.csv";
+const csvFilePath = __dirname+"/../csv/geotargets.csv";
 require("dotenv").config();
 const { google } = require("googleapis");
 var OAuth2 = google.auth.OAuth2;
