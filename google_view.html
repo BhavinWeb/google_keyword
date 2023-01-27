@@ -107,15 +107,19 @@
 
 $( document ).ready(function() {
     get_city();
+  
 });
+
+var base_url = window.location.origin;
 
 
 
 function get_city(){
+ alert(base_url);
   $.ajax({
 type: "POST",
       contentType: "application/json; charset=utf-8",
-      url: "https://google-keyword.vercel.app/getCityList",
+      url: base_url+"/getCityList",
       success: function (result) {
           // console.log(result.data);
           var select_option = "";
@@ -138,7 +142,7 @@ function get_data(){
 $.ajax({
 type: "GET",
       contentType: "application/json; charset=utf-8",
-      url: "https://google-keyword.vercel.app/GetKeywordsData",
+      url: base_url+"/GetKeywordsData",
        data: {
                 'keyword': $("#keyword").val(),
                 'location': $("#location").val(),
@@ -162,7 +166,7 @@ function GetmapData(){
 $.ajax({
 type: "GET",
       contentType: "application/json; charset=utf-8",
-      url: "https://google-keyword.vercel.app/GetmapData",
+      url: base_url+"/GetmapData",
        data: {
                 'keyword': $("#keyword").val(),
                 'location': $("#location").val(),
@@ -184,7 +188,7 @@ function GetyelpData(){
   $.ajax({
   type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: "https://google-keyword.vercel.app/GetyelpData",
+        url: base_url+"/GetyelpData",
          data: {
                   'keyword': $("#keyword").val(),
                   'location': $("#location").val(),
@@ -205,7 +209,7 @@ function GetyelpData(){
   $.ajax({
   type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: "https://google-keyword.vercel.app/GethouzzData",
+        url: base_url+"/GethouzzData",
          data: {
                   'keyword': $("#keyword").val(),
                   'location': $("#location").val(),
@@ -230,7 +234,7 @@ function get_keyword_list(){
 
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: "https://google-keyword.vercel.app/GetKeywordsdataList",
+        url: base_url+"/GetKeywordsdataList",
         data: {
                     'keyword': $("#keyword").val(),
                     'location': $("#location").val(),
@@ -272,7 +276,7 @@ function show_ranking_modal(identifier){
 
         type: "GET",
         contentType: "application/json; charset=utf-8",
-        url: "https://google-keyword.vercel.app/GetAhrefsData",
+        url: base_url+"/GetAhrefsData",
         data: {
                     'addrefs_url':main_url,
                 },
