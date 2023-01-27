@@ -45,7 +45,20 @@ const { Console } = require("console");
 // spreadsheet key is the long id in the sheets URL
 
 // Credentials for the service account
-const CREDENTIALS = JSON.parse(fs.readFileSync("./servicekey.json"));
+
+var firbase_data = {
+  "type": "service_account",
+  "project_id": "fine-loader-369308",
+  "private_key_id": "62f6e2ac91208178c1b25525a91ee13473237501",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDEKgsg/Uzfy88T\nqprUv1sffxFo/Hp2FKsv6T/og+r5xAuhLjpeJ6zA4k1M/AjyFtziOj8vHBS70Jap\nt+L8AMhn+YJz/jZmcS+U35p3YZzhpS9GgKydWJepX/Rs2Dvwad06/AbDr/QC1hTu\nM3biHbIUqifFMQ2yHlJ0tkghCfErEThGhFUELQfc1bRPE+q1J5bvxdS/pr7p8pjT\nXWBJ/x8I5A2dnb8cSVTcrW6116r7q3/C5lyBKb4/qXugFz5imxWn4YYBbHtlUg85\nP80TKHoz4FjMYFKEXm6MZbOIG0hzldOsNaoHr8/wN0teLb7L1ITR/2fmyG6Kof1Z\n6vN6Mc8nAgMBAAECggEAIFmN+p5F57Ws4Yw7OsY7Pk9ObTcPRlreklOlMkX9txFB\nbmQjxF7xn+DnfkB62dsIXpcxeqY8YG7OnJA9SBwkRfVWsfn55Fyvy/LbfpWOnC20\nGqyMtZQkdWO5ePETYsXqnILEkM/7GIlP6//OZWLKo/AdspOGM9oen1hnk79CfOdG\nGmDYnlXXE3YbAqvjSdYZw6jR7pjpS/HFhi3MO1JPW+Ti7ioCCQJldmNOqHKQrJCx\nuq1gMnyTNoqot5jPMQhOLFpVqVzvIURyyP7W38WMk3OVb0ghzPHTHa1ixykqWVFk\nRwQjNs0J81dbFzsq6rXRdGnSwPs9XoDrOn7QNuxfPQKBgQDyuk5yAVxiqwagIKfY\nehbpW5bZA5EiChGdPjl5nkHOK+dwZVIntIqZITVh3gpR8U4IhdFgustSH0Okqhsi\nGGpzWX+ETFRH7/JT3REeCSjE0VeZYGOpyhk5un6V2HKnYnJPnoPr8uYuh5HDmFcQ\n3hn5xQPaDmTIwjMFRYTwl8SrAwKBgQDO4/FQeVXhUM9tSZTHB1IT/kL5/uZhY6U1\n5mSne/Z6oSwoOyCVdWbmgeN1plnqo3JCb72ym0TJ8C7XYpdBHT+ynVNtYbQwU7y7\nWHr5Jcn2pi7cLjHzqoACuQ898zbJnV59M87U/dFKhIGsraUDXmpranNyhgcEX434\nHwZcMFxgDQKBgHXvphvoo13hoXd+Rm99atJ5yQKqpAL5B3PyfvSju2+Uj4BiCpf2\nNf2PUCO8QiFscLDdbE1mlVHSlQhWCpb3bAmd68J5X94QLRsoZ5/DbYar/LcuSV5/\nLuCIx+bA43yG7enXqFulisgC4QU7aNpuQArG+kciBUAyc53VGHHaHBnHAoGBAMn4\n1vzz5vYWeNk9CwQdzm/8OZBq2qdaqs9qwvqKVv4yV7RSvKWLvk/rn42cP42D0Kix\nA2TYlZf6ZRAZjIWhsyyA0BApYMoJBWdzomGWFYs3gumqI1O4ME34MbwNsn+ypKrf\np9xgiTARGbLktgIK6yNAAcJcu372ddczGndnMtcFAoGAKY4QY/U4h7ZMkCV4JqPI\nmun1M589ZylyDXu4/uAKfwlePiZBk7/5WLwCpFAksU8Tb2epaNEmB0JHxYYWitAj\nyyIUARxgzNL7Oqc4ujBiJDLR0/TaOOSrqOjE1o0FPfD6eJM90LE74RnfsTwywS3a\nyyIkgIevvuwwXtbSwK+QSNo=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-lc4ta@fine-loader-369308.iam.gserviceaccount.com",
+  "client_id": "112681331562585502819",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-lc4ta%40fine-loader-369308.iam.gserviceaccount.com"
+}
+const CREDENTIALS = firbase_data;
 
 const doLogin = async (req, res, next) => {
   try {
