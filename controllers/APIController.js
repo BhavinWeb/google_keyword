@@ -18,6 +18,8 @@ const csv = require("csvtojson");
 const csvFilePath = __dirname+"/../csv/geotargets.csv";
 require("dotenv").config();
 const { google } = require("googleapis");
+
+
 var OAuth2 = google.auth.OAuth2;
 var oauth2Client = new OAuth2(
   process.env.CLIENT_ID,
@@ -3909,10 +3911,22 @@ const GetKeywordsData = async (req, res, next) => {
     Key = webdriver.Key,
     WebElement = webdriver.WebElement;
 
+    var capabilities = {
+      'browserName': 'Chrome',
+      'browser_version': '81.0',
+      'os': 'Windows',
+      'os_version': '10',
+      'resolution': '1024x768',
+      'browserstack.user': 'hemant_u4k2qr',
+      'browserstack.key': '3srwUyqhYqW3cYifzLLW',
+      'name': 'Bstack-[Node] Sample Test'
+  }
+  
   const driver = new webdriver.Builder()
-    .forBrowser("chrome")
-    // .setChromeOptions(chromeOptions)
-    .build();
+      .forBrowser('chrome')
+      .usingServer('http://hemant_u4k2qr:3srwUyqhYqW3cYifzLLW@hub.browserstack.com/wd/hub')
+      .withCapabilities(capabilities)
+      .build();
   const db = admin.firestore();
   var j = 1;
   var addDetails = [];
@@ -4011,10 +4025,22 @@ const GetmapData = async (req, res, next) => {
     Key = webdriver.Key,
     WebElement = webdriver.WebElement;
 
+    var capabilities = {
+      'browserName': 'Chrome',
+      'browser_version': '81.0',
+      'os': 'Windows',
+      'os_version': '10',
+      'resolution': '1024x768',
+      'browserstack.user': 'hemant_u4k2qr',
+      'browserstack.key': '3srwUyqhYqW3cYifzLLW',
+      'name': 'Bstack-[Node] Sample Test'
+  }
+  
   const driver = new webdriver.Builder()
-    .forBrowser("chrome")
-    // .setChromeOptions(chromeOptions)
-    .build();
+      .forBrowser('chrome')
+      .usingServer('http://hemant_u4k2qr:3srwUyqhYqW3cYifzLLW@hub.browserstack.com/wd/hub')
+      .withCapabilities(capabilities)
+      .build();
   const db = admin.firestore();
   var j = 1;
   var addDetails = [];
@@ -4144,10 +4170,23 @@ const GetyelpData = async (req, res, next) => {
     Key = webdriver.Key,
     WebElement = webdriver.WebElement;
 
+    var capabilities = {
+      'browserName': 'Chrome',
+      'browser_version': '81.0',
+      'os': 'Windows',
+      'os_version': '10',
+      'resolution': '1024x768',
+      'browserstack.user': 'hemant_u4k2qr',
+      'browserstack.key': '3srwUyqhYqW3cYifzLLW',
+      'name': 'Bstack-[Node] Sample Test'
+  }
+  
   const driver = new webdriver.Builder()
-    .forBrowser("chrome")
-    // .setChromeOptions(chromeOptions)
-    .build();
+      .forBrowser('chrome')
+      .usingServer('http://hemant_u4k2qr:3srwUyqhYqW3cYifzLLW@hub.browserstack.com/wd/hub')
+      .withCapabilities(capabilities)
+      .build();
+      
   const db = admin.firestore();
 
   var main_url = [];
@@ -4351,10 +4390,22 @@ const GethouzzData = async (req, res, next) => {
     Key = webdriver.Key,
     WebElement = webdriver.WebElement;
 
+    var capabilities = {
+      'browserName': 'Chrome',
+      'browser_version': '81.0',
+      'os': 'Windows',
+      'os_version': '10',
+      'resolution': '1024x768',
+      'browserstack.user': 'hemant_u4k2qr',
+      'browserstack.key': '3srwUyqhYqW3cYifzLLW',
+      'name': 'Bstack-[Node] Sample Test'
+  }
+  
   const driver = new webdriver.Builder()
-    .forBrowser("chrome")
-    // .setChromeOptions(chromeOptions)
-    .build();
+      .forBrowser('chrome')
+      .usingServer('http://hemant_u4k2qr:3srwUyqhYqW3cYifzLLW@hub.browserstack.com/wd/hub')
+      .withCapabilities(capabilities)
+      .build();
   const db = admin.firestore();
 
   var main_url = [];
@@ -4739,11 +4790,22 @@ const GetAhrefsData = async (req, res, next) => {
   options.addArguments("--log-level=3")
 
 
+  var capabilities = {
+    'browserName': 'Chrome',
+    'browser_version': '81.0',
+    'os': 'Windows',
+    'os_version': '10',
+    'resolution': '1024x768',
+    'browserstack.user': 'hemant_u4k2qr',
+    'browserstack.key': '3srwUyqhYqW3cYifzLLW',
+    'name': 'Bstack-[Node] Sample Test'
+}
+
 const driver = new webdriver.Builder()
-  .forBrowser("chrome")
-  // .forBrowser("firefox")
-  .setChromeOptions(options)
-  .build();
+    .forBrowser('chrome')
+    .usingServer('http://hemant_u4k2qr:3srwUyqhYqW3cYifzLLW@hub.browserstack.com/wd/hub')
+    .withCapabilities(capabilities)
+    .build();
 
     driver.get('https://app.ahrefs.com/user/login').then(async function () {
       setTimeout(async () => {
