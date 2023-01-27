@@ -54,6 +54,7 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
+    "@vercel/node": "^2.8.16",
     "chromedriver": "^108.0.0",
     "start-server-and-test": "^1.15.2"
   }
