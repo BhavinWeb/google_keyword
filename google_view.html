@@ -123,7 +123,7 @@ type: "POST",
       success: function (result) {
           // console.log(result.data);
           var select_option = "";
-          select_option += "<option value='london'>Select city</option>";
+          select_option += "<option value='valley'>Select city</option>";
         $.each(result.data, function( index, value ) {
           select_option += "<option value='"+value.name+"'>"+value.name+"</option>";
         });
