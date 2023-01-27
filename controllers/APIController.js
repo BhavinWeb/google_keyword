@@ -15,7 +15,7 @@ const webdriver = require("selenium-webdriver"),
   By = webdriver.By,
   Key = webdriver.Key;
 const csv = require("csvtojson");
-const csvFilePath = "https://google-keyword.vercel.app/csv/geotargets.csv";
+const csvFilePath = "../csv/geotargets.csv";
 require("dotenv").config();
 const { google } = require("googleapis");
 var OAuth2 = google.auth.OAuth2;
