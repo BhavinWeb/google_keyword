@@ -1,0 +1,291 @@
+<html>
+    <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+
+        <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap-theme.min.css" integrity="sha384-6pzBo3FDv/PJ8r2KRkGHifhEocL+1X2rVCTTkUfGk7/0pbek5mMa1upzvWbrUbOZ" crossorigin="anonymous">
+    <link 
+    href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" 
+    rel="stylesheet"  type='text/css'>
+    <style>
+      .d-none{
+        display: none;
+      }
+    </style>
+</head>
+    <body>
+       <section class="m-5">
+        
+            <div class="row ">
+                <div class="col-sm-12 text-center">
+                    <h1>Keyword search</h1>
+                </div>
+                <div class="col-sm-12 ">
+                    <form  id="shareForm">
+                    <div class="container">
+
+                        <div class="col-sm-12 col-md-4 mt-3">
+                       
+                            <input type="text" name="keyword" class="form-control" placeholder="Keyword" id="keyword"><span class="pull-right">
+                      
+                        </div>
+
+                        <div class="col-sm-12 col-md-4 mt-3">
+                          <select id="location"  name="city" class="form-control">
+                           
+                          </select>
+                            <input type="text" name="city" class="form-control d-none" placeholder="location" id="location"><span class="pull-right">
+                         
+                        </div>
+                        <div class="col-sm-12 col-md-2 mt-3">
+                       
+                          <input type="number" name="total_result" class="form-control" placeholder="total_result" id="total_result"><span class="pull-right">
+                    
+                      </div>
+                    </form>
+
+                        <div class="col-sm-12 col-md-2  mt-3">
+                       
+                            <button type="button" onClick="get_data()"  class="btn btn-primary">Search</button>
+                         
+                        </div>
+                       
+                        </div>
+                    
+                </div>
+                <div class="col-sm-12 ml-5 text-center d-none" id="please_wait">
+                    <span class="text-danger">Please wait......</span>
+                </div>
+
+                <div class="col-sm-12 ml-5">
+
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">Website</th>
+                        <th scope="col">Google</th>
+                        <th scope="col">Map</th>
+                        <th scope="col">Yelp</th>
+                        <th scope="col">Houzz</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="url">
+                      <tr><th scope="row">-</th><td>-</td><td>-</td><td>-</td><td>-</td> </tr>
+                   
+                    </tbody>
+                  </table>
+                </div>
+          </div>
+
+            </div>
+       </section>
+       <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLongTitle">Addrefs  Details</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+             <div id="url_display">
+
+             </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+    <script>
+
+$( document ).ready(function() {
+    get_city();
+});
+
+
+
+function get_city(){
+  $.ajax({
+type: "POST",
+      contentType: "application/json; charset=utf-8",
+      url: "http://127.0.0.1:3001/getCityList",
+      success: function (result) {
+          // console.log(result.data);
+          var select_option = "";
+        $.each(result.data, function( index, value ) {
+          select_option += "<option value='"+value.name+"'>"+value.name+"</option>";
+        });
+        $("#location").html(select_option);
+      }
+ });
+}
+
+
+function get_data(){
+  if($("#total_result").val() == 0 ||  $("#keyword").val() == ""){
+      alert("some thing wrong!");
+  }else{
+
+    $("#please_wait").removeClass('d-none');
+$.ajax({
+type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://127.0.0.1:3001/GetKeywordsData",
+       data: {
+                'keyword': $("#keyword").val(),
+                'location': $("#location").val(),
+                'total_result': $("#total_result").val(),
+            },
+      success: function (result) {
+        if(result.data == 1){
+          GetmapData();
+        }
+        
+      }
+ });
+
+  }
+
+
+}
+
+function GetmapData(){
+  
+$.ajax({
+type: "GET",
+      contentType: "application/json; charset=utf-8",
+      url: "http://127.0.0.1:3001/GetmapData",
+       data: {
+                'keyword': $("#keyword").val(),
+                'location': $("#location").val(),
+                'total_result': $("#total_result").val(),
+            },
+      success: function (result) {
+        if(result.data == 1){
+         
+          GethouzzData();
+        }
+        
+      }
+ });
+
+}
+
+function GetyelpData(){
+  
+  $.ajax({
+  type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://127.0.0.1:3001/GetyelpData",
+         data: {
+                  'keyword': $("#keyword").val(),
+                  'location': $("#location").val(),
+                  'total_result': $("#total_result").val(),
+              },
+        success: function (result) {
+          if(result.data == 1){
+            get_keyword_list();
+          }
+          
+        }
+   });
+  
+  }
+  
+  function GethouzzData(){
+  
+  $.ajax({
+  type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://127.0.0.1:3001/GethouzzData",
+         data: {
+                  'keyword': $("#keyword").val(),
+                  'location': $("#location").val(),
+                  'total_result': $("#total_result").val(),
+              },
+        success: function (result) {
+          if(result.data == 1){
+            GetyelpData();
+            
+          }
+          
+        }
+   });
+  
+  }
+  
+
+
+function get_keyword_list(){
+
+    $.ajax({
+
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://127.0.0.1:3001/GetKeywordsdataList",
+        data: {
+                    'keyword': $("#keyword").val(),
+                    'location': $("#location").val(),
+                    'total_result': $("#total_result").val(),
+                },
+
+        success: function (result) {
+
+          $("#please_wait").addClass('d-none');
+
+          $(".search_result").removeClass('d-none');
+
+          var url = "";
+
+          var google_html = "";
+          
+          var map_html = "";
+
+          var yelp_html = "";
+
+          var houzz_html = "";
+
+          $.each(result.duplication, function( index, value ) {
+              url +='<tr><th scope="row"><a href="'+value.url_rank+'">link</a></th><td>'+value.google_rank+'</td><td>'+value.map_rank+'</td><td>'+value.yelp_rank+'</td><td>'+value.houzz_rank+'</td> <td><button class="btn btn-primary" data-url ="'+value.url_rank+'" onclick="show_ranking_modal(this)">View</button></td> </tr>';
+          });
+
+         $("#url").html(url);
+
+      }
+    });
+
+}
+
+function show_ranking_modal(identifier){
+ 
+  var main_url = $(identifier).data('url');
+
+  $.ajax({
+
+        type: "GET",
+        contentType: "application/json; charset=utf-8",
+        url: "http://127.0.0.1:3001/GetAhrefsData",
+        data: {
+                    'addrefs_url':main_url,
+                },
+
+        success: function (result) {
+              var html = "<a href="+main_url+" target='_blank'>click here..</a>";
+              $("#url_display").html(html);
+              $('#exampleModalCenter').modal('toggle');
+        }
+  });
+}
+
+        
+    </script>
+</html>

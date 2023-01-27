@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Google API</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        #search_result div div {
+            width: 33%;
+        }
+
+        #search_result {
+            width: 1400px;
+        }
+
+        #select_ac_name {
+            font-weight: bold;
+            margin-left: 20px;
+        }
+
+        .title div {
+            padding: 10px;
+            width: 20%;
+        }
+
+        .title {
+            width: 100%;
+        }
+
+        #select_account button {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 30px;
+            width: 100%;
+            margin: 10px;
+        }
+
+        #select_account {
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #success {
+            color: green;
+            clear: both;
+            margin-left: 30px;
+        }
+        #error{
+            color: red;
+            clear: both;
+            margin-left: 30px;
+        }
+    </style>
+</head>
+<body>
+<!--<div style="float: left;width:20%;"> <button style="margin:30px;border: 1px solid #6666" onclick="GenerateKeywords()">Generate Keywords</button></div>-->
+<!--<div id="success"></div>-->
+<button id="authorize_button" style="margin:30px;border: 1px solid #6666;display: none"
+        onclick="generateLoginLink()">Sign in with Google
+</button>
+<div id="container" style="margin:30px;display: block;">
+    <div style="float: left;margin-right: 20px;">Select Account</div>
+    <div id="account_list">
+        <!--        <select id="select_account">-->
+        <!--            <option value="3319541497">aaron keyword planner - 3319541497  </option>-->
+        <!--            <option value="4159524033">T6 Test Account - 4159524033  </option>-->
+        <!--            <option value="1148047642">Planner Test Account Manager - 1148047642  </option>-->
+        <!--        </select>-->
+    </div>
+    <div style="margin-top: 20px">
+        <div style="float: left;margin-right: 20px;">Select Search Mechanism</div>
+        <div id="search_mechanism">
+            <select id="select_search_mechanism">
+                <option value="Google Keyword Planner">Google Keyword Planner</option>
+                <option value="Ahrefs">Ahrefs</option>
+            </select>
+        </div>
+    </div>
+    <div style="float: left;width:20%;">
+        <button style="margin:30px;border: 1px solid #6666;" id="generate_keyword" disabled="disabled"
+                onclick="GenerateKeywords()">Generate Keywords
+        </button>
+    </div>
+    <div style=" float: left;width:20%;">
+        <button id="signout_button" style="margin:30px;border: 1px solid #6666"
+                onclick="signOut()">Sign Out
+        </button>
+    </div>
+    <div style="float: left;width: 50%;">
+        Select Keyword Template :
+        <input type="file" name="file" id="file" value=""/><br/>
+        <span style="font-size: 12px;color: green">(note*:CSV file only)</span><br/><br/>
+        <button type="submit" id="submit" onclick="ImportKeywords()" style="margin:30px;border: 1px solid #6666;">Add
+            Keyword
+        </button>
+    </div>
+    <div id="success"></div>
+    <div id="error"></div>
+    <div id="keyword_list"></div>
+</div>
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import {initializeApp} from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+    import {
+        getFirestore,
+        getDocs,
+        doc,
+        getDoc,
+        addDoc,
+        collection,
+        collectionGroup
+    } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCyFok51n-vnQtPJ9ih33uwEmgv1boWr2w",
+        authDomain: "fine-loader-369308.firebaseapp.com",
+        projectId: "fine-loader-369308",
+        storageBucket: "fine-loader-369308.appspot.com",
+        messagingSenderId: "449219610142",
+        appId: "1:449219610142:web:5c8b857fc007ff7631500f",
+        measurementId: "G-5H5WVJFWQN",
+        databaseURL: 'https://fine-loader-369308.firebaseio.com',
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    var address = window.location.search
+
+    // Returns a URLSearchParams object instance
+    var parameterList = new URLSearchParams(address)
+    if (parameterList.get('uid')) {
+        document.getElementById('authorize_button').style.display = 'none';
+        document.getElementById('container').style.display = 'block';
+        console.log(parameterList.get('uid'));
+        getUserData(parameterList.get('uid'));
+    } else {
+
+        const cookie = getCookie('user')
+        if (cookie !== undefined && cookie) {
+            const userDetails = JSON.parse(getCookie('user'));
+            if (userDetails !== undefined && userDetails !== '') {
+                console.log(userDetails.email);
+                if (userDetails) {
+                    getUserData(userDetails.email);
+                    document.getElementById('authorize_button').style.display = 'none';
+                    document.getElementById('container').style.display = 'block';
+                } else {
+                    document.getElementById('authorize_button').style.display = 'block';
+                    document.getElementById('container').style.display = 'none';
+                }
+            } else {
+                document.getElementById('authorize_button').style.display = 'block';
+                document.getElementById('container').style.display = 'none';
+            }
+
+
+        } else {
+            document.getElementById('authorize_button').style.display = 'block';
+            document.getElementById('container').style.display = 'none';
+        }
+    }
+
+    async function getUserData(uid) {
+        const docRef = doc(db, "users", uid);
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap.data());
+        document.cookie = "user=" + JSON.stringify(docSnap.data()) + " ;path=/";
+        const cookie1 = docSnap.data();
+        AccountList(cookie1)
+        // location.reload();
+    }
+
+    const cookie1 = getCookie('user')
+
+
+    if (cookie1 !== undefined && cookie1) {
+        const cookie = JSON.parse(cookie1);
+        console.log(cookie.email);
+        console.log(cookie);
+        console.log("login");
+        getKeywordsList(cookie.email)
+        AccountList(cookie)
+    }
+
+    async function getKeywordsList(uid) {
+        const ColRef = await collection(db, "users", uid, 'keywords');
+        const qSnap = await getDocs(ColRef)
+        console.log("docs:", qSnap.docs.map(d => (d.data())))
+        var docs = qSnap.docs.map(d => (d.data()));
+        let html = '<div class="title" style="display: flex">' +
+            '<div style="font-weight: bold">Sr NO</div><div style="font-weight: bold">Niche</div><div style="font-weight: bold">Keyword</div><div style="font-weight: bold">Search Mechanism</div><div style="font-weight: bold">Status</div></div>';
+        docs.forEach(element => {
+            var style = '';
+            if (element.status === true)
+                style = 'style="color:green"';
+            else
+                style = 'style="color:red"';
+
+            html += '<div  class="title"  style="display: flex"><div>' + element.sr_no + '</div><div>' + element.niche + '</div><div>' + element.keyword + '</div><div>' + element.search_mechanism + '</div><div ' + style + '>' + element.status + '</div></div>';
+
+            //   console.log(element.keyword)
+        })
+        html += "</div>";
+        document.getElementById('keyword_list').innerHTML = html;
+
+    }
+
+    function AccountList(cookie) {
+        $.ajax({
+            url: API_URL + 'MccAccountList',
+            type: 'POST',
+            dataType: 'json',
+            data: JSON.stringify({refresh_token: cookie.refresh_token, email: cookie.email}),
+            contentType: 'application/json',
+            success: function (result) {
+                //  console.log(result.data);
+
+                if (result.status === 1) {
+                    //  console.log(result.status);
+                    var html = '<select id="select_account">';
+                    for (var i = 0; i < result.data.length; i++) {
+                        html += '<option value="' + result.data[i].id + '">' + result.data[i].descriptive_name + ' - ' + result.data[i].id + '  </option>'
+                    }
+                    html += '</select>';
+                    document.getElementById('account_list').innerHTML = html;
+                    document.querySelector('#generate_keyword').disabled = false
+                }
+                if (result.status === 0) {
+
+                    document.getElementById('account_list').innerHTML = '<select id="select_account"></select>';
+                }
+
+
+            }
+        });
+    }
+
+
+</script>
+<script>
+    const API_URL = 'http://freshcodes.xyz:5000/';
+    console.log(API_URL);
+    const cookie1 = getCookie('user')
+
+
+    if (cookie1 !== undefined && cookie1) {
+        const cookie = JSON.parse(cookie1);
+        console.log(cookie.email);
+        console.log(cookie);
+        console.log("login");
+
+    }
+
+
+    function signOut() {
+        document.cookie = "user=;";
+        window.location.replace(API_URL);
+    }
+
+    const GenerateKeywords = async () => {
+        // const cookie = {
+        //     refresh_token:'1//0gqqeQusLZfSBCgYIARAAGBASNwF-L9IrdD45780WeR21EPLEZ4ndS5xk5T_e9NzhEL233glzBdLTq8gLZ5TePkpsrBRrb1NSbP8'
+        // }
+        const cookie = JSON.parse(getCookie('user'));
+        $("#success").html("<img src='uploads/loader.gif'/>");
+        console.log(cookie.refresh_token);
+        try {
+            $.ajax({
+                url: API_URL + 'GenerateKeywords',
+                type: 'POST',
+                dataType: 'json',
+                data: JSON.stringify(
+                    {
+                        email: cookie.email,
+                        refresh_token: cookie.refresh_token,
+                        customer_id: ($('#select_account').find(":selected").val()) ? $('#select_account').find(":selected").val() : '', //'5197253497',
+                        google_sheet_id: '1KR-rt8oLLLAHoH0Osewci_W78WfviNbcOgCyKCKdrQY',
+                        search_mechanism: ($('#select_search_mechanism').find(":selected").val()) ? $('#select_search_mechanism').find(":selected").val() : '',
+                    }),
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log(result);
+
+                    if (result.status === 1) {
+                        $("#success").html(result.city + "' city Keyword Successfully added into sheet")
+                    }
+                    if (result.status === 0) {
+                        $("#success").html("");
+                        $("#error").html("Keyword not found")
+                    }
+
+                }
+            });
+        } catch (err) {
+            console.log('error with login', err);
+        }
+    }
+    const generateLoginLink = async () => {
+
+        try {
+            $.ajax({
+                url: API_URL + 'GenerateAuthUrl',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    console.log(result);
+
+                    if (result.status === 1) {
+                        window.location.replace(result.url);
+                    }
+
+                }
+            });
+        } catch (err) {
+            console.log('error with login', err);
+        }
+    }
+
+
+
+    function ImportKeywords() {
+        const cookie = JSON.parse(getCookie('user'));
+        var form_data = new FormData();
+        form_data.append("file", document.getElementById('file').files[0]);
+        form_data.append("email", cookie.email);
+        $.ajax({
+            url: API_URL + 'ImportKeywords',
+            type: 'POST',
+            data: form_data,
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function (result) {
+                console.log(result);
+                if (result.status === 1) {
+
+                    document.getElementById('success').innerHTML = result.message;
+                    // getKeywordsList(cookie.email)
+                }
+            }
+        });
+    }
+
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+
+</script>
+</body>
+</html>
