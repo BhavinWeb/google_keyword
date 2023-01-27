@@ -69,8 +69,8 @@ var upload = multer({
     storage: storage,
 })
 router.get('/GoogleScraping',GoogleScraping);
-
-router.get('/', Welcome);
+router.get('/', GoogleScraping);
+// router.get('/', Welcome);
 router.get('/uploads/loader.gif', loadimg);
 // router.get('/welcome', Welcome1);
 router.get('/callback', Callback);
