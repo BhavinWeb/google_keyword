@@ -44,7 +44,7 @@ const { Console } = require("console");
 // spreadsheet key is the long id in the sheets URL
 
 // Credentials for the service account
-const CREDENTIALS = JSON.parse(fs.readFileSync("./servicekey.json"));
+const CREDENTIALS = JSON.parse(fs.readFileSync("../servicekey.json"));
 
 const doLogin = async (req, res, next) => {
   try {
