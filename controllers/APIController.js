@@ -29,6 +29,7 @@ const fetch = (...args) =>
 
 const admin = require("firebase-admin");
 var serviceAccount = require("../FHKeyfile.json");
+var fire_base = require("../servicekey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -44,7 +45,7 @@ const { Console } = require("console");
 // spreadsheet key is the long id in the sheets URL
 
 // Credentials for the service account
-const CREDENTIALS = JSON.parse(fs.readFileSync("../servicekey.json"));
+const CREDENTIALS = JSON.parse(fire_base);
 
 const doLogin = async (req, res, next) => {
   try {
